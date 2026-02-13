@@ -20,6 +20,7 @@ An interactive, playful Valentine's Day webpage where users are asked, *“Will 
    - Hover over **No** to see it dodge and trigger messages.
    - Click **Yes** for fireworks and floating hearts.
 4. After the celebration, click **Muah 😘** to reset the page.
+5. Access https://danakchea.github.io/valentine/ for deployed version
 
 ## 🛠️ Technologies Used
 
