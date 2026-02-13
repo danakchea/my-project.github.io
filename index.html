@@ -63,6 +63,15 @@ button:active {
     max-width: 400px;
     opacity: 0;
     transition: opacity 0.5s ease;
+    font-size: 24px; /* Increase font size */
+    text-align: center;
+}
+
+/* Optional: even bigger font on mobile */
+@media (max-width: 600px) {
+    #message {
+        font-size: 36px;
+    }
 }
 
 .heart {
@@ -83,7 +92,7 @@ button:active {
 .heart::before { top:-10px; left:0; }
 .heart::after { left:10px; top:0; }
 
-/* Final Muah button */
+/* Muah button floating, no white background */
 #thankYouBtn {
     display: none;
     position: fixed;
@@ -92,7 +101,7 @@ button:active {
     transform: translate(-50%, -50%);
     padding: 20px 40px;
     font-size: 24px;
-    background-color: #ff4b5c; /* button color only, no extra container */
+    background-color: #ff4b5c; /* button color only */
     color: white;
     border: none;
     border-radius: 30px;
@@ -111,8 +120,8 @@ button:active {
 }
 </style>
 </head>
+<!-- Move Muah button outside container -->
 <body>
-
 <canvas id="fireworksCanvas"></canvas>
 
 <div class="container" id="mainContainer">
@@ -122,8 +131,10 @@ button:active {
         <button class="no" id="noBtn">No</button>
     </div>
     <div id="message"></div>
-    <button id="thankYouBtn">Muah 😘</button>
 </div>
+
+<!-- Muah button floating directly on background -->
+<button id="thankYouBtn">Muah 😘</button>
 
 <script>
 const canvas = document.getElementById("fireworksCanvas");
@@ -303,7 +314,7 @@ yesBtn.addEventListener('click', ()=>{
     question.style.display="none";
     message.style.opacity = 0;
 
-    message.textContent="Slanh tuy mai ai.";
+    message.textContent="💕Slanh tuy mai ai.😘 ";
     setTimeout(()=> message.style.opacity = 1,50);
 
     createHearts(centerX, centerY);
