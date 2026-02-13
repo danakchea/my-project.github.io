@@ -81,7 +81,6 @@ button {
 
 #thankYouBtn {
     display: none;
-    margin-top: 20px;
     padding: 12px 24px;
     font-size: 18px;
     background-color: #ff4b5c;
@@ -89,6 +88,7 @@ button {
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    z-index: 20;
 }
 </style>
 </head>
@@ -97,7 +97,7 @@ button {
 <canvas id="fireworksCanvas"></canvas>
 
 <div class="container" id="mainContainer">
-    <h1>Will you be my Valentine?</h1>
+    <h1 id="question">Will you be my Valentine?</h1>
     <div class="buttons" id="buttonsDiv">
         <button class="yes" id="yesBtn">Yes</button>
         <button class="no" id="noBtn">No</button>
@@ -121,6 +121,7 @@ const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const message = document.getElementById("message");
 const buttonsDiv = document.getElementById("buttonsDiv");
+const question = document.getElementById("question");
 const thankYouBtn = document.getElementById("thankYouBtn");
 
 const loveQuotes = [
@@ -184,7 +185,6 @@ class Particle {
 let particles = [];
 let rockets = [];
 
-// Rocket class
 class Rocket {
     constructor(x, targetY, color) {
         this.x = x; this.y = canvas.height; this.targetY = targetY; this.color = color; this.done=false; this.size=40; this.trail=[];
@@ -225,7 +225,6 @@ class Rocket {
     }
 }
 
-// Animate rockets and particles
 function animate() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
     for(let i=rockets.length-1;i>=0;i--){ rockets[i].update(); rockets[i].draw(); if(rockets[i].done) rockets.splice(i,1); }
@@ -234,7 +233,6 @@ function animate() {
 }
 animate();
 
-// Launch rocket
 function launchHeartFirework() {
     const x = Math.random()*canvas.width;
     const targetY = canvas.height*(0.2+Math.random()*0.4);
@@ -243,51 +241,18 @@ function launchHeartFirework() {
     fireworkLaunchSound.currentTime=0; fireworkLaunchSound.play().catch(()=>{});
 }
 
-// --- Draw bouquet ---
-function drawBouquet() {
-    const flowers = [];
-    const flowerCount = 7;
-    const startX = canvas.width/2;
-    const startY = canvas.height + 50;
-    const spacing = 50;
-
-    for(let i=0;i<flowerCount;i++){
-        flowers.push({x:startX + (i-flowerCount/2)*spacing, y:startY, targetY:canvas.height/2 + Math.random()*50, size:20+Math.random()*10});
-    }
-
-    let progress = 0;
-    const bouquetAnim = setInterval(()=>{
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        flowers.forEach(f=>{
-            f.y -= 2;
-            // stem
-            ctx.strokeStyle = "#228B22";
-            ctx.lineWidth=4;
-            ctx.beginPath();
-            ctx.moveTo(f.x, canvas.height);
-            ctx.lineTo(f.x, f.y);
-            ctx.stroke();
-            // rose
-            ctx.fillStyle = "#ff4b5c";
-            ctx.beginPath();
-            ctx.arc(f.x, f.y, f.size,0,Math.PI*2);
-            ctx.fill();
-        });
-        progress++;
-        if(progress>150){ // bouquet complete
-            clearInterval(bouquetAnim);
-            thankYouBtn.style.display="inline-block";
-        }
-    },16);
-}
-
 // --- Yes button ---
 yesBtn.addEventListener('click', ()=>{
     const rect = yesBtn.getBoundingClientRect();
     const centerX = rect.left + rect.width/2;
     const centerY = rect.top + rect.height/2;
 
-    message.style.opacity=0;
+    // Hide question and buttons immediately
+    buttonsDiv.style.display="none";
+    question.style.display="none";
+    message.style.opacity = 0;
+
+    // Show message for fun (optional)
     message.textContent="Slanh tuy mai ai.";
     setTimeout(()=> message.style.opacity=1,50);
 
@@ -303,20 +268,19 @@ yesBtn.addEventListener('click', ()=>{
         elapsed += intervalTime;
         if(elapsed >= duration){
             clearInterval(interval);
-            // Hide buttons and message
-            buttonsDiv.style.display="none";
-            message.style.opacity = 0;
-            message.textContent = "";
-            // Draw bouquet after fireworks
-            setTimeout(drawBouquet,500);
+            message.style.opacity=0; // hide message
+            message.textContent="";
+            // Show only Thank You button
+            thankYouBtn.style.display="inline-block";
         }
     }, intervalTime);
 });
 
 // --- Thank you button ---
 thankYouBtn.addEventListener('click', ()=>{
-    // reset page
+    // Reset everything
     buttonsDiv.style.display="flex";
+    question.style.display="block";
     thankYouBtn.style.display="none";
     message.style.opacity=0;
     message.textContent="";
