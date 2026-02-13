@@ -52,6 +52,7 @@
             font-weight: bold;
             color: #333;
             min-height: 24px;
+            max-width: 400px;
         }
     </style>
 </head>
@@ -70,18 +71,21 @@
     const noBtn = document.getElementById("noBtn");
     const message = document.getElementById("message");
 
-    const funnyTexts = [
-        "Hey! Don’t click No 😤",
-        "That’s illegal 🚨",
-        "Nice try 😂",
-        "No is not an option 😌",
-        "Stop chasing me 😭",
-        "You really want to click that? 🤨",
-        "Absolutely not 😎"
-    ];
+    // Fetch a joke from the API
+    async function fetchJoke() {
+        try {
+            const response = await fetch("https://icanhazdadjoke.com/", {
+                headers: { Accept: "application/json" }
+            });
+            const data = await response.json();
+            return data.joke;
+        } catch (err) {
+            return "Hmm… couldn't get a joke this time 😕";
+        }
+    }
 
-    function moveButton() {
-        // Make it float freely after first hover
+    async function moveButton() {
+        // Allow it to float freely after first hover
         noBtn.style.position = "fixed";
 
         const maxX = window.innerWidth - noBtn.offsetWidth;
@@ -93,9 +97,9 @@
         noBtn.style.left = randomX + "px";
         noBtn.style.top = randomY + "px";
 
-        // Show random funny message
-        const randomText = funnyTexts[Math.floor(Math.random() * funnyTexts.length)];
-        message.textContent = randomText;
+        // Fetch and show a random joke
+        const joke = await fetchJoke();
+        message.textContent = joke;
     }
 
     noBtn.addEventListener("mouseover", moveButton);
