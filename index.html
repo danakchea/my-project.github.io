@@ -22,13 +22,8 @@ canvas {
     pointer-events: none;
 }
 
-/* Container for initial question */
 .container {
     text-align: center;
-    background-color: white;
-    padding: 40px 60px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     position: relative;
     z-index: 10;
 }
@@ -40,47 +35,65 @@ canvas {
     margin-top: 20px;
 }
 
+@keyframes wiggle {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(-15deg); }
+  30% { transform: rotate(15deg); }
+  45% { transform: rotate(-10deg); }
+  60% { transform: rotate(10deg); }
+  75% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.wiggle {
+  animation: wiggle 0.5s ease;
+}
+
+
 button {
-    padding: 10px 20px;
+    padding: 12px 24px;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 16px;
     cursor: pointer;
     position: relative;
+    transition: transform 0.2s;
 }
+button:active { transform: scale(0.95); }
 
 .yes { background-color: #ff4b5c; color: white; }
 .no { background-color: #ff6f61; color: white; }
 
-#message {
+#messagePanel {
     margin-top: 20px;
-    font-weight: bold;
-    color: #333;
-    min-height: 24px;
-    max-width: 400px;
-    font-size: 28px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 60px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
-/* Muah button floating directly on background */
+#message {
+    font-weight: bold;
+    color: #fff;
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
 #thankYouBtn {
     display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px 40px;
-    font-size: 28px;
+    font-size: 24px;
     background-color: #ff4b5c;
     color: white;
     border: none;
     border-radius: 30px;
+    padding: 16px 32px;
     cursor: pointer;
-    z-index: 20;
     box-shadow: 0 6px 15px rgba(0,0,0,0.25);
 }
 
-/* Heart shape for floating hearts */
 .heart {
     position: absolute;
     width: 20px;
@@ -99,11 +112,10 @@ button {
 .heart::before { top:-10px; left:0; }
 .heart::after { left:10px; top:0; }
 
-/* Mobile adjustments */
-@media (max-width: 600px) {
-    #message { font-size: 32px; }
-    button { font-size: 18px; padding: 14px 24px; }
-    #thankYouBtn { font-size: 32px; padding: 24px 48px; }
+@media (max-width:600px){
+    #message { font-size:36px; }
+    button { font-size:18px; padding:14px 28px; }
+    #thankYouBtn { font-size:28px; padding:18px 36px; }
 }
 </style>
 </head>
@@ -117,11 +129,12 @@ button {
         <button class="yes" id="yesBtn">Yes</button>
         <button class="no" id="noBtn">No</button>
     </div>
-    <div id="message"></div>
-</div>
 
-<!-- Muah button outside container -->
-<button id="thankYouBtn">Muah 😘</button>
+    <div id="messagePanel">
+        <div id="message">💕Slanh tuy mai ai.😘</div>
+        <button id="thankYouBtn">Muah 😘</button>
+    </div>
+</div>
 
 <script>
 const canvas = document.getElementById("fireworksCanvas");
@@ -129,75 +142,76 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-window.addEventListener('resize', () => {
+window.addEventListener('resize',()=>{
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 });
 
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
+const messagePanel = document.getElementById("messagePanel");
 const message = document.getElementById("message");
-const mainContainer = document.getElementById("mainContainer");
+const buttonsDiv = document.getElementById("buttonsDiv");
+const question = document.getElementById("question");
 const thankYouBtn = document.getElementById("thankYouBtn");
+const mainContainer = document.getElementById("mainContainer");
 
-const loveQuotes = [
-    "❤️ Oun and ot slanh b eh man?",
-    "💘 Tov bach reh.",
-    "💞 Het ter ke.",
-    "💝 Ban ai. Heussssssssss",
-    "💓 Heusssssssss Chhoy Sreyla",
-    "💖 Bachhhhhhhhhhhhhhh.",
-    "💟 Na 1 nhom kilo sral, nhom min hean ng bong t",
-    "💌 Ngor sin.......",
-    "💕 Yerssssss Kamab....",
-    "💗 Tlerm thom ah neh"
+let loveQuotes = [
+    "😠 Oun ang ot slanh b eh man?",
+    "💢 Tov bach reh.",
+    "😡 Het ter ke.",
+    "😏 Ban ai. Heussssssssss",
+    "🙂 Heusssssssss Chhoy Sreyla",
+    "😈 Bachhhhhhhhhhhhhhh.",
+    "🤬 Na 1 nhom kilo sral, nhom min hean ng bong t",
+    "😫 Ngor sin.......",
+    "😖 Yerssssss Kamab....",
+    "😩 Tlerm thom ah neh"
 ];
 
 // --- No button movement ---
-function moveButton() {
-    noBtn.style.position = "fixed";
+function moveButton(){
+    noBtn.style.position="fixed";
     const maxX = window.innerWidth - noBtn.offsetWidth;
     const maxY = window.innerHeight - noBtn.offsetHeight;
-    noBtn.style.left = Math.random()*maxX + "px";
-    noBtn.style.top = Math.random()*maxY + "px";
+    noBtn.style.left=Math.random()*maxX+"px";
+    noBtn.style.top=Math.random()*maxY+"px";
     const quote = loveQuotes[Math.floor(Math.random()*loveQuotes.length)];
-    message.style.opacity=0;
-    message.textContent=quote;
-    setTimeout(()=>message.style.opacity=1,50);
+    message.textContent = quote;
+    messagePanel.style.opacity = 1;
 }
 noBtn.addEventListener("mouseover", moveButton);
 
-// --- Hearts floating ---
-function createHearts(centerX, centerY) {
+// --- Hearts ---
+function createHearts(cx,cy){
     for(let i=0;i<15;i++){
         const heart=document.createElement('div');
         heart.className='heart';
         document.body.appendChild(heart);
-        heart.style.left=centerX+'px';
-        heart.style.top=centerY+'px';
+        heart.style.left=cx+'px';
+        heart.style.top=cy+'px';
         const angle=i*20*Math.PI/180;
         const radius=20+i*8;
         const duration=2000+Math.random()*800;
         const rotateDeg=360+Math.random()*360;
         heart.animate([
-            { transform:`translate(0,0) rotate(0deg)`, opacity:1 },
-            { transform:`translate(${Math.cos(angle)*radius}px, ${-200-radius}px) rotate(${rotateDeg}deg)`, opacity:0 }
-        ], { duration:duration, easing:'ease-out' });
-        setTimeout(()=>heart.remove(), duration);
+            {transform:`translate(0,0) rotate(0deg)`, opacity:1},
+            {transform:`translate(${Math.cos(angle)*radius}px, ${-200-radius}px) rotate(${rotateDeg}deg)`, opacity:0}
+        ],{duration:duration, easing:'ease-out'});
+        setTimeout(()=>heart.remove(),duration);
     }
 }
 
-// --- Fireworks on canvas ---
-class Particle {
-    constructor(x, y, vx, vy, color, life, radius=6) {
-        this.x=x; this.y=y; this.vx=vx; this.vy=vy;
-        this.color=color; this.life=life; this.opacity=1; this.radius=radius;
+// --- Fireworks ---
+class Particle{
+    constructor(x,y,vx,vy,color,life,radius=6){
+        this.x=x; this.y=y; this.vx=vx; this.vy=vy; this.color=color; this.life=life; this.opacity=1; this.radius=radius;
     }
-    update() { this.vy+=0.02; this.x+=this.vx; this.y+=this.vy; this.opacity-=0.003; this.life--; }
-    draw() { ctx.globalAlpha=Math.max(this.opacity,0); ctx.fillStyle=this.color; ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,Math.PI*2); ctx.fill(); }
+    update(){ this.vy+=0.02; this.x+=this.vx; this.y+=this.vy; this.opacity-=0.003; this.life--; }
+    draw(){ ctx.globalAlpha=Math.max(this.opacity,0); ctx.fillStyle=this.color; ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,Math.PI*2); ctx.fill(); }
 }
 let particles=[]; let rockets=[];
-class Rocket {
+class Rocket{
     constructor(x,targetY,color){
         this.x=x; this.y=canvas.height; this.targetY=targetY; this.color=color; this.done=false; this.size=40; this.trail=[];
     }
@@ -247,36 +261,39 @@ function launchHeartFirework(){
 }
 
 // --- Yes button click ---
-yesBtn.addEventListener('click', ()=>{
-    // Hide container
-    mainContainer.style.display = 'none';
+yesBtn.addEventListener('click',()=>{
+    buttonsDiv.style.display='none';
+    question.style.display='none';
+    messagePanel.style.opacity = 1;
+    message.textContent = "💕Slanh tuy mai ai.😘";
 
-    // Show Muah button
-    thankYouBtn.style.display = 'inline-block';
-
-    // Launch initial hearts from button
-    createHearts(window.innerWidth/2, window.innerHeight/2);
-
-    // Launch fireworks for 8 seconds
-    let elapsed=0;
-    const duration=8000;
-    const intervalTime=1000;
-    const interval=setInterval(()=>{
-        for(let i=0;i<5;i++) setTimeout(()=>launchHeartFirework(), i*30);
-        // Also float small hearts from Muah button
-        createHearts(window.innerWidth/2, window.innerHeight/2);
+    // Fireworks for 8s
+    let elapsed=0; const duration=5000; const intervalTime=1000;
+    const interval = setInterval(()=>{
+        for(let i=0;i<5;i++) setTimeout(()=>launchHeartFirework(),i*30);
+        createHearts(window.innerWidth/2,window.innerHeight/2);
         elapsed+=intervalTime;
-        if(elapsed>=duration) clearInterval(interval);
-    }, intervalTime);
+        if(elapsed>=duration){
+            clearInterval(interval);
+            // Show Muah button now
+            thankYouBtn.style.display='inline-block';
+        }
+    },intervalTime);
 });
 
-// --- Optional: click Muah to reset ---
-thankYouBtn.addEventListener('click', ()=>{
-    mainContainer.style.display='flex';
-    thankYouBtn.style.display='none';
-    rockets=[]; particles=[];
-    message.textContent="";
+thankYouBtn.addEventListener('click', () => {
+    // Reset everything exactly like initial load
+    buttonsDiv.style.display = 'flex';
+    question.style.display = 'block';
+    messagePanel.style.opacity = 0;    // hide message panel
+    thankYouBtn.style.display = 'none';
+    message.textContent = "";          // clear message
+
+    rockets = [];
+    particles = [];
 });
+
 </script>
+
 </body>
 </html>
