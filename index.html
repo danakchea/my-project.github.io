@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Be my valentine 2026? 💖</title>
+<title>Be my Valentine 2026? 💖</title>
 <style>
 body {
     margin: 0;
@@ -22,14 +22,15 @@ canvas {
     pointer-events: none;
 }
 
+/* Container for initial question */
 .container {
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: white;
     padding: 40px 60px;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    z-index: 10;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     position: relative;
+    z-index: 10;
 }
 
 .buttons {
@@ -40,16 +41,12 @@ canvas {
 }
 
 button {
-    padding: 12px 24px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     font-size: 16px;
     cursor: pointer;
     position: relative;
-    transition: transform 0.2s;
-}
-button:active {
-    transform: scale(0.95);
 }
 
 .yes { background-color: #ff4b5c; color: white; }
@@ -61,19 +58,29 @@ button:active {
     color: #333;
     min-height: 24px;
     max-width: 400px;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    font-size: 24px; /* Increase font size */
+    font-size: 28px;
     text-align: center;
 }
 
-/* Optional: even bigger font on mobile */
-@media (max-width: 600px) {
-    #message {
-        font-size: 36px;
-    }
+/* Muah button floating directly on background */
+#thankYouBtn {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 40px;
+    font-size: 28px;
+    background-color: #ff4b5c;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    z-index: 20;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
 }
 
+/* Heart shape for floating hearts */
 .heart {
     position: absolute;
     width: 20px;
@@ -92,36 +99,16 @@ button:active {
 .heart::before { top:-10px; left:0; }
 .heart::after { left:10px; top:0; }
 
-/* Muah button floating, no white background */
-#thankYouBtn {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px 40px;
-    font-size: 24px;
-    background-color: #ff4b5c; /* button color only */
-    color: white;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    z-index: 20;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
-}
-
-
-/* Responsive font size for mobile */
+/* Mobile adjustments */
 @media (max-width: 600px) {
-    .container { padding: 30px 20px; }
-    button { font-size: 18px; padding: 14px 28px; }
-    #thankYouBtn { font-size: 28px; padding: 24px 48px; }
-    #message { font-size: 18px; }
+    #message { font-size: 32px; }
+    button { font-size: 18px; padding: 14px 24px; }
+    #thankYouBtn { font-size: 32px; padding: 24px 48px; }
 }
 </style>
 </head>
-<!-- Move Muah button outside container -->
 <body>
+
 <canvas id="fireworksCanvas"></canvas>
 
 <div class="container" id="mainContainer">
@@ -133,7 +120,7 @@ button:active {
     <div id="message"></div>
 </div>
 
-<!-- Muah button floating directly on background -->
+<!-- Muah button outside container -->
 <button id="thankYouBtn">Muah 😘</button>
 
 <script>
@@ -150,32 +137,21 @@ window.addEventListener('resize', () => {
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const message = document.getElementById("message");
-const buttonsDiv = document.getElementById("buttonsDiv");
-const question = document.getElementById("question");
+const mainContainer = document.getElementById("mainContainer");
 const thankYouBtn = document.getElementById("thankYouBtn");
 
-let loveQuotes = [
-    "😠 Oun ang ot slanh b eh man?",
-    "💢 Tov bach reh.",
-    "😡 Het ter ke.",
-    "😏 Ban ai. Heussssssssss",
-    "🙂 Heusssssssss Chhoy Sreyla",
-    "😈 Bachhhhhhhhhhhhhhh.",
-    "🤬 Na 1 nhom kilo sral, nhom min hean ng bong t",
-    "😫 Ngor sin.......",
-    "😖 Yerssssss Kamab....",
-    "😩 Tlerm thom ah neh"
+const loveQuotes = [
+    "❤️ Oun and ot slanh b eh man?",
+    "💘 Tov bach reh.",
+    "💞 Het ter ke.",
+    "💝 Ban ai. Heussssssssss",
+    "💓 Heusssssssss Chhoy Sreyla",
+    "💖 Bachhhhhhhhhhhhhhh.",
+    "💟 Na 1 nhom kilo sral, nhom min hean ng bong t",
+    "💌 Ngor sin.......",
+    "💕 Yerssssss Kamab....",
+    "💗 Tlerm thom ah neh"
 ];
-
-// Shuffle quotes
-function shuffle(array) {
-    for(let i = array.length -1; i > 0; i--){
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
-let quoteQueue = shuffle([...loveQuotes]);
 
 // --- No button movement ---
 function moveButton() {
@@ -184,17 +160,14 @@ function moveButton() {
     const maxY = window.innerHeight - noBtn.offsetHeight;
     noBtn.style.left = Math.random()*maxX + "px";
     noBtn.style.top = Math.random()*maxY + "px";
-
-    if(quoteQueue.length === 0) quoteQueue = shuffle([...loveQuotes]);
-    const quote = quoteQueue.shift();
-
-    message.style.opacity = 0;
-    message.textContent = quote;
-    setTimeout(()=> message.style.opacity = 1,50);
+    const quote = loveQuotes[Math.floor(Math.random()*loveQuotes.length)];
+    message.style.opacity=0;
+    message.textContent=quote;
+    setTimeout(()=>message.style.opacity=1,50);
 }
 noBtn.addEventListener("mouseover", moveButton);
 
-// --- Hearts floating from button ---
+// --- Hearts floating ---
 function createHearts(centerX, centerY) {
     for(let i=0;i<15;i++){
         const heart=document.createElement('div');
@@ -214,36 +187,30 @@ function createHearts(centerX, centerY) {
     }
 }
 
-// --- Fireworks ---
+// --- Fireworks on canvas ---
 class Particle {
-    constructor(x,y,vx,vy,color,life,radius=6){
-        this.x=x; this.y=y; this.vx=vx; this.vy=vy; this.color=color; this.life=life; this.opacity=1; this.radius=radius;
+    constructor(x, y, vx, vy, color, life, radius=6) {
+        this.x=x; this.y=y; this.vx=vx; this.vy=vy;
+        this.color=color; this.life=life; this.opacity=1; this.radius=radius;
     }
-    update(){ this.vy += 0.02; this.x += this.vx; this.y += this.vy; this.opacity -=0.003; this.life--; }
-    draw(){ ctx.globalAlpha=Math.max(this.opacity,0); ctx.fillStyle=this.color; ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,Math.PI*2); ctx.fill(); }
+    update() { this.vy+=0.02; this.x+=this.vx; this.y+=this.vy; this.opacity-=0.003; this.life--; }
+    draw() { ctx.globalAlpha=Math.max(this.opacity,0); ctx.fillStyle=this.color; ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,Math.PI*2); ctx.fill(); }
 }
-
-let particles=[]; 
-let rockets=[];
-
+let particles=[]; let rockets=[];
 class Rocket {
     constructor(x,targetY,color){
         this.x=x; this.y=canvas.height; this.targetY=targetY; this.color=color; this.done=false; this.size=40; this.trail=[];
     }
     update(){
-        this.trail.push({x:this.x, y:this.y});
-        if(this.trail.length>15) this.trail.shift();
-        this.y -=8;
-        if(this.y <= this.targetY){ this.explode(); this.done=true; }
+        this.trail.push({x:this.x,y:this.y});
+        if(this.trail.length>15)this.trail.shift();
+        this.y-=8;
+        if(this.y<=this.targetY){ this.explode(); this.done=true; }
     }
     draw(){
         ctx.strokeStyle=this.color; ctx.lineWidth=2; ctx.beginPath();
-        for(let i=0;i<this.trail.length-1;i++){
-            const p1=this.trail[i], p2=this.trail[i+1];
-            ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y);
-        }
+        for(let i=0;i<this.trail.length-1;i++){ const p1=this.trail[i],p2=this.trail[i+1]; ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); }
         ctx.stroke();
-        // draw heart rocket
         ctx.fillStyle=this.color; ctx.beginPath();
         const topCurveHeight=this.size*0.3;
         ctx.moveTo(this.x,this.y+topCurveHeight);
@@ -265,7 +232,6 @@ class Rocket {
         }
     }
 }
-
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     for(let i=rockets.length-1;i>=0;i--){ rockets[i].update(); rockets[i].draw(); if(rockets[i].done) rockets.splice(i,1); }
@@ -273,7 +239,6 @@ function animate(){
     requestAnimationFrame(animate);
 }
 animate();
-
 function launchHeartFirework(){
     const x=Math.random()*canvas.width;
     const targetY=canvas.height*(0.2+Math.random()*0.4);
@@ -281,70 +246,36 @@ function launchHeartFirework(){
     rockets.push(new Rocket(x,targetY,color));
 }
 
-// --- Muah tiny hearts ---
-function floatingHeartsOnButton() {
-    const rect = thankYouBtn.getBoundingClientRect();
-    const centerX = rect.left + rect.width/2;
-    const centerY = rect.top + rect.height/2;
-    for(let i=0;i<10;i++){
-        const heart=document.createElement('div');
-        heart.className='heart';
-        document.body.appendChild(heart);
-        heart.style.left=centerX+'px';
-        heart.style.top=centerY+'px';
-        const angle=(Math.random()*360)*Math.PI/180;
-        const radius=10 + Math.random()*20;
-        const duration=2000 + Math.random()*500;
-        const rotateDeg=360 + Math.random()*360;
-        heart.animate([
-            { transform:`translate(0,0) rotate(0deg)`, opacity:1 },
-            { transform:`translate(${Math.cos(angle)*radius}px, ${-50 - Math.random()*50}px) rotate(${rotateDeg}deg)`, opacity:0 }
-        ], { duration:duration, easing:'ease-out' });
-        setTimeout(()=>heart.remove(), duration);
-    }
-}
-
-// --- Yes button ---
+// --- Yes button click ---
 yesBtn.addEventListener('click', ()=>{
-    const rect = yesBtn.getBoundingClientRect();
-    const centerX = rect.left + rect.width/2;
-    const centerY = rect.top + rect.height/2;
+    // Hide container
+    mainContainer.style.display = 'none';
 
-    buttonsDiv.style.display="none";
-    question.style.display="none";
-    message.style.opacity = 0;
+    // Show Muah button
+    thankYouBtn.style.display = 'inline-block';
 
-    message.textContent="💕Slanh tuy mai ai.😘 ";
-    setTimeout(()=> message.style.opacity = 1,50);
+    // Launch initial hearts from button
+    createHearts(window.innerWidth/2, window.innerHeight/2);
 
-    createHearts(centerX, centerY);
-
-    for(let i=0;i<5;i++) setTimeout(()=>launchHeartFirework(), i*30);
-
+    // Launch fireworks for 8 seconds
     let elapsed=0;
     const duration=8000;
     const intervalTime=1000;
     const interval=setInterval(()=>{
         for(let i=0;i<5;i++) setTimeout(()=>launchHeartFirework(), i*30);
-        elapsed += intervalTime;
-        if(elapsed >= duration){
-            clearInterval(interval);
-            message.style.opacity=0;
-            message.textContent="";
-            thankYouBtn.style.display="inline-block";
-            floatingHeartsOnButton();
-        }
+        // Also float small hearts from Muah button
+        createHearts(window.innerWidth/2, window.innerHeight/2);
+        elapsed+=intervalTime;
+        if(elapsed>=duration) clearInterval(interval);
     }, intervalTime);
 });
 
-// --- Thank you button ---
+// --- Optional: click Muah to reset ---
 thankYouBtn.addEventListener('click', ()=>{
-    buttonsDiv.style.display="flex";
-    question.style.display="block";
-    thankYouBtn.style.display="none";
-    message.style.opacity=0;
-    message.textContent="";
+    mainContainer.style.display='flex';
+    thankYouBtn.style.display='none';
     rockets=[]; particles=[];
+    message.textContent="";
 });
 </script>
 </body>
