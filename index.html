@@ -155,7 +155,7 @@ let loveQuotes = [
     "😩 Tlerm thom ah neh"
 ];
 
-// Shuffle quotes to avoid repeats
+// Shuffle quotes
 function shuffle(array) {
     for(let i = array.length -1; i > 0; i--){
         const j = Math.floor(Math.random() * (i + 1));
@@ -182,7 +182,7 @@ function moveButton() {
 }
 noBtn.addEventListener("mouseover", moveButton);
 
-// --- Hearts floating ---
+// --- Hearts floating from button ---
 function createHearts(centerX, centerY) {
     for(let i=0;i<15;i++){
         const heart=document.createElement('div');
@@ -269,6 +269,29 @@ function launchHeartFirework(){
     rockets.push(new Rocket(x,targetY,color));
 }
 
+// --- Muah tiny hearts ---
+function floatingHeartsOnButton() {
+    const rect = thankYouBtn.getBoundingClientRect();
+    const centerX = rect.left + rect.width/2;
+    const centerY = rect.top + rect.height/2;
+    for(let i=0;i<10;i++){
+        const heart=document.createElement('div');
+        heart.className='heart';
+        document.body.appendChild(heart);
+        heart.style.left=centerX+'px';
+        heart.style.top=centerY+'px';
+        const angle=(Math.random()*360)*Math.PI/180;
+        const radius=10 + Math.random()*20;
+        const duration=2000 + Math.random()*500;
+        const rotateDeg=360 + Math.random()*360;
+        heart.animate([
+            { transform:`translate(0,0) rotate(0deg)`, opacity:1 },
+            { transform:`translate(${Math.cos(angle)*radius}px, ${-50 - Math.random()*50}px) rotate(${rotateDeg}deg)`, opacity:0 }
+        ], { duration:duration, easing:'ease-out' });
+        setTimeout(()=>heart.remove(), duration);
+    }
+}
+
 // --- Yes button ---
 yesBtn.addEventListener('click', ()=>{
     const rect = yesBtn.getBoundingClientRect();
@@ -297,6 +320,7 @@ yesBtn.addEventListener('click', ()=>{
             message.style.opacity=0;
             message.textContent="";
             thankYouBtn.style.display="inline-block";
+            floatingHeartsOnButton();
         }
     }, intervalTime);
 });
