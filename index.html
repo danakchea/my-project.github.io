@@ -293,10 +293,16 @@ yesBtn.addEventListener('click', ()=>{
     const centerX = rect.left + rect.width/2;
     const centerY = rect.top + rect.height/2;
 
-    createHearts(centerX, centerY); // immediate heart pops
+    // Show your special message
+    message.style.opacity = 0;
+    message.textContent = "Slanh tuy mai ai mae kon ai";
+    setTimeout(()=> message.style.opacity = 1, 50);
 
-    // Launch 10 rockets staggered slightly for smoothness
-    for(let i=0;i<10;i++){
+    // Immediate heart pops
+    createHearts(centerX, centerY);
+
+    // Launch 5 rockets staggered slightly for smoothness
+    for(let i=0;i<5;i++){
         setTimeout(()=>launchHeartFirework(), i*30); 
     }
 
@@ -304,13 +310,14 @@ yesBtn.addEventListener('click', ()=>{
     const duration = 8000; // 8 seconds
     const intervalTime = 1000;
     const interval = setInterval(()=>{
-        for(let i=0;i<10;i++){
+        for(let i=0;i<5;i++){
             setTimeout(()=>launchHeartFirework(), i*30);
         }
         elapsed += intervalTime;
         if(elapsed >= duration) clearInterval(interval);
     }, intervalTime);
 });
+
 </script>
 </body>
 </html>
