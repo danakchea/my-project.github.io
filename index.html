@@ -120,15 +120,14 @@
         void noBtn.offsetWidth; // force reflow
         noBtn.classList.add("wiggle");
 
-        // Show random Valentine message
+        // Pick random message
         const randomMsg = valentineMessages[Math.floor(Math.random() * valentineMessages.length)];
-
-        // Immediately hide, update, then fade in
-        message.style.opacity = 0;
         message.textContent = randomMsg;
-        requestAnimationFrame(() => {
-            message.classList.add("show");
-        });
+
+        // Trigger fade-in
+        message.classList.remove("show");
+        void message.offsetWidth; // force reflow
+        message.classList.add("show");
     }
 
     noBtn.addEventListener("mouseover", moveButton);
