@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
 <head>
 <title>Be my Valentine 2026? 💖</title>
@@ -141,7 +141,7 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-window.addEventListener('resize',()=>{
+window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 });
@@ -153,7 +153,6 @@ const message = document.getElementById("message");
 const buttonsDiv = document.getElementById("buttonsDiv");
 const question = document.getElementById("question");
 const thankYouBtn = document.getElementById("thankYouBtn");
-const mainContainer = document.getElementById("mainContainer");
 
 let loveQuotes = [
     "😠 Oun ang ot slanh b eh man?",
@@ -168,8 +167,8 @@ let loveQuotes = [
     "😩 Tlerm thom ah neh"
 ];
 
-// --- No button movement ---
-function moveButton(){
+// --- No button movement for desktop + mobile ---
+function moveButton() {
     noBtn.style.position = "fixed";
     const maxX = window.innerWidth - noBtn.offsetWidth;
     const maxY = window.innerHeight - noBtn.offsetHeight;
@@ -186,38 +185,43 @@ function moveButton(){
         yesBtn.classList.remove("wiggle");
     }, 500);
 }
-noBtn.addEventListener("mouseover", moveButton);
 
-// --- Hearts ---
-function createHearts(cx,cy){
-    for(let i=0;i<15;i++){
-        const heart=document.createElement('div');
-        heart.className='heart';
+// Use pointerenter for cross-device support
+noBtn.addEventListener("pointerenter", moveButton);
+
+// --- Hearts animation ---
+function createHearts(cx, cy) {
+    for(let i = 0; i < 15; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
         document.body.appendChild(heart);
-        heart.style.left=cx+'px';
-        heart.style.top=cy+'px';
-        const angle=i*20*Math.PI/180;
-        const radius=20+i*8;
-        const duration=2000+Math.random()*800;
-        const rotateDeg=360+Math.random()*360;
+        heart.style.left = cx + 'px';
+        heart.style.top = cy + 'px';
+        const angle = i * 20 * Math.PI / 180;
+        const radius = 20 + i * 8;
+        const duration = 2000 + Math.random() * 800;
+        const rotateDeg = 360 + Math.random() * 360;
         heart.animate([
-            {transform:`translate(0,0) rotate(0deg)`, opacity:1},
-            {transform:`translate(${Math.cos(angle)*radius}px, ${-200-radius}px) rotate(${rotateDeg}deg)`, opacity:0}
-        ],{duration:duration, easing:'ease-out'});
-        setTimeout(()=>heart.remove(),duration);
+            { transform: `translate(0,0) rotate(0deg)`, opacity: 1 },
+            { transform: `translate(${Math.cos(angle)*radius}px, ${-200-radius}px) rotate(${rotateDeg}deg)`, opacity: 0 }
+        ], { duration: duration, easing: 'ease-out' });
+        setTimeout(() => heart.remove(), duration);
     }
 }
 
 // --- Fireworks ---
-class Particle{
-    constructor(x,y,vx,vy,color,life,radius=6){
+class Particle {
+    constructor(x,y,vx,vy,color,life,radius=6) {
         this.x=x; this.y=y; this.vx=vx; this.vy=vy; this.color=color; this.life=life; this.opacity=1; this.radius=radius;
     }
     update(){ this.vy+=0.02; this.x+=this.vx; this.y+=this.vy; this.opacity-=0.003; this.life--; }
     draw(){ ctx.globalAlpha=Math.max(this.opacity,0); ctx.fillStyle=this.color; ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,Math.PI*2); ctx.fill(); }
 }
-let particles=[]; let rockets=[];
-class Rocket{
+
+let particles=[]; 
+let rockets=[];
+
+class Rocket {
     constructor(x,targetY,color){
         this.x=x; this.y=canvas.height; this.targetY=targetY; this.color=color; this.done=false; this.size=40; this.trail=[];
     }
@@ -252,6 +256,7 @@ class Rocket{
         }
     }
 }
+
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     for(let i=rockets.length-1;i>=0;i--){ rockets[i].update(); rockets[i].draw(); if(rockets[i].done) rockets.splice(i,1); }
@@ -259,6 +264,7 @@ function animate(){
     requestAnimationFrame(animate);
 }
 animate();
+
 function launchHeartFirework(){
     const x=Math.random()*canvas.width;
     const targetY=canvas.height*(0.2+Math.random()*0.4);
@@ -267,34 +273,32 @@ function launchHeartFirework(){
 }
 
 // --- Yes button click ---
-yesBtn.addEventListener('click',()=>{
+yesBtn.addEventListener('click', ()=>{
     buttonsDiv.style.display='none';
     question.style.display='none';
     messagePanel.style.opacity = 1;
     message.textContent = "💕Slanh tuy mai ai.😘";
 
-    // Fireworks for 8s
-    let elapsed=0; const duration=5000; const intervalTime=1000;
+    let elapsed = 0; 
+    const duration = 5000; 
+    const intervalTime = 1000;
     const interval = setInterval(()=>{
         for(let i=0;i<5;i++) setTimeout(()=>launchHeartFirework(),i*30);
         createHearts(window.innerWidth/2,window.innerHeight/2);
         elapsed+=intervalTime;
         if(elapsed>=duration){
             clearInterval(interval);
-            // Show Muah button now
             thankYouBtn.style.display='inline-block';
         }
-    },intervalTime);
+    }, intervalTime);
 });
 
 thankYouBtn.addEventListener('click', () => {
-    // Reset everything exactly like initial load
     buttonsDiv.style.display = 'flex';
     question.style.display = 'block';
-    messagePanel.style.opacity = 0;    // hide message panel
+    messagePanel.style.opacity = 0;
     thankYouBtn.style.display = 'none';
-    message.textContent = "";          // clear message
-
+    message.textContent = "";
     rockets = [];
     particles = [];
 });
