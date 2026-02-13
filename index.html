@@ -100,9 +100,10 @@ const loveQuotes = [
     "💟 No distance can lessen my love for you."
 ];
 
-// Sounds
-const heartSound = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YYQAAAAA");
-const fireworkSound = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA");
+// --- Realistic Sounds ---
+const heartSound = new Audio("https://www.orangefreesounds.com/wp-content/uploads/2023/04/Firework-crackling-sound-effect.mp3");
+const fireworkSound = new Audio("https://orangefreesounds.com/wp-content/uploads/2024/12/Firework-burst-sound-effect.mp3");
+const fireworkLaunchSound = new Audio("https://www.orangefreesounds.com/wp-content/uploads/2021/12/Firework-audio.mp3");
 
 // --- No button ---
 function moveButton() {
@@ -153,6 +154,7 @@ class HeartFirework {
         this.rocket.style.top=this.y+'px';
         document.body.appendChild(this.rocket);
         this.exploded=false;
+        fireworkLaunchSound.currentTime=0; fireworkLaunchSound.play().catch(()=>{}); // launch sound
         this.animate();
     }
 
@@ -162,7 +164,7 @@ class HeartFirework {
                 this.y -= 8;
                 this.rocket.style.top=this.y+'px';
             } else if(!this.exploded){
-                fireworkSound.currentTime=0; fireworkSound.play().catch(()=>{});
+                fireworkSound.currentTime=0; fireworkSound.play().catch(()=>{}); // explosion sound
                 this.explode();
                 this.rocket.remove();
                 this.exploded=true;
@@ -171,7 +173,7 @@ class HeartFirework {
     }
 
     explode() {
-        const scale = 6 + Math.random()*3; // heart size
+        const scale = 6 + Math.random()*3;
         for(let t=0; t<Math.PI*2; t+=0.1){
             const x = 16*Math.pow(Math.sin(t),3);
             const y = 13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t);
