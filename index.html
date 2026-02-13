@@ -12,6 +12,7 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
         }
 
         .container {
@@ -20,6 +21,7 @@
             padding: 40px 60px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            z-index: 10;
         }
 
         .buttons {
@@ -36,6 +38,8 @@
             font-size: 16px;
             cursor: pointer;
             transition: transform 0.1s ease;
+            position: relative;
+            z-index: 1;
         }
 
         .yes {
@@ -71,6 +75,52 @@
         .wiggle {
             animation: wiggle 0.5s ease;
         }
+
+        /* Heart animation */
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff4b5c;
+            transform: rotate(-45deg);
+            animation: floatUp 1s forwards;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff4b5c;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: 10px;
+            top: 0;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translate(0, 0) rotate(-45deg); opacity: 1; }
+            100% { transform: translate(calc(-50px + 100px*rand()), -200px) rotate(-45deg); opacity: 0; }
+        }
+
+        /* Firework particle */
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #ffdd57, #ff4b5c);
+            border-radius: 50%;
+            opacity: 1;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -78,7 +128,7 @@
 <div class="container">
     <h1>Will you be my Valentine?</h1>
     <div class="buttons">
-        <button class="yes" onclick="alert('So happy you said Yes! 💖')">Yes</button>
+        <button class="yes" id="yesBtn">Yes</button>
         <button class="no" id="noBtn">No</button>
     </div>
     <div id="message"></div>
@@ -86,9 +136,9 @@
 
 <script>
     const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
     const message = document.getElementById("message");
 
-    // Predefined love/romantic quotes array
     const loveQuotes = [
         "💖 Love is the greatest adventure of all.",
         "🌹 You are my heart's delight.",
@@ -99,42 +149,68 @@
         "💝 You make my soul smile.",
         "💓 True love never fades.",
         "💕 Happiness is holding your hand.",
-        "💟 No distance can lessen my love for you.",
-        "💌 You + Me = Forever 💖",
-        "🌹 Love is not just words, it's actions.",
-        "💝 Every heartbeat whispers your name.",
-        "💘 With you, every day is Valentine’s Day.",
-        "💞 My heart is yours, always.",
-        "💓 You are the sunshine of my life.",
-        "💖 Together is my favorite place to be.",
-        "💌 You complete my soul.",
-        "❤️ My love for you grows every moment.",
-        "💟 You are my sweetest adventure."
+        "💟 No distance can lessen my love for you."
     ];
 
     function moveButton() {
-        // Move No button
         noBtn.style.position = "fixed";
         const maxX = window.innerWidth - noBtn.offsetWidth;
         const maxY = window.innerHeight - noBtn.offsetHeight;
         noBtn.style.left = Math.random() * maxX + "px";
         noBtn.style.top = Math.random() * maxY + "px";
 
-        // Wiggle animation
         noBtn.classList.remove("wiggle");
-        void noBtn.offsetWidth; // force reflow
+        void noBtn.offsetWidth;
         noBtn.classList.add("wiggle");
 
-        // Pick a random love quote
         const quote = loveQuotes[Math.floor(Math.random() * loveQuotes.length)];
-
-        // Fade-in the message
         message.style.opacity = 0;
         message.textContent = quote;
         setTimeout(() => { message.style.opacity = 1; }, 50);
     }
 
     noBtn.addEventListener("mouseover", moveButton);
+
+    // Firework + heart animation
+    function createHeartsAndFireworks(e) {
+        const rect = yesBtn.getBoundingClientRect();
+        const centerX = rect.left + rect.width/2;
+        const centerY = rect.top + rect.height/2;
+
+        // Create hearts
+        for(let i=0; i<10; i++){
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            document.body.appendChild(heart);
+            heart.style.left = centerX + 'px';
+            heart.style.top = centerY + 'px';
+            const angle = Math.random()*Math.PI*2;
+            const distance = 50 + Math.random()*50;
+            heart.animate([
+                { transform: `translate(0,0) rotate(-45deg)`, opacity:1 },
+                { transform: `translate(${Math.cos(angle)*distance}px, ${Math.sin(angle)*distance-100}px) rotate(-45deg)`, opacity:0 }
+            ], { duration: 1000, easing:'ease-out' });
+            setTimeout(()=> heart.remove(), 1000);
+        }
+
+        // Firework particles
+        for(let i=0; i<20; i++){
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            document.body.appendChild(particle);
+            particle.style.left = centerX + 'px';
+            particle.style.top = centerY + 'px';
+            const angle = Math.random()*Math.PI*2;
+            const distance = 50 + Math.random()*50;
+            particle.animate([
+                { transform: `translate(0,0)`, opacity:1 },
+                { transform: `translate(${Math.cos(angle)*distance}px, ${Math.sin(angle)*distance}px)`, opacity:0 }
+            ], { duration: 800 + Math.random()*400, easing:'ease-out' });
+            setTimeout(()=> particle.remove(), 1200);
+        }
+    }
+
+    yesBtn.addEventListener('click', createHeartsAndFireworks);
 </script>
 
 </body>
