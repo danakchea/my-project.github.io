@@ -62,7 +62,6 @@
             opacity: 1;
         }
 
-        /* Wiggle animation */
         @keyframes wiggle {
             0% { transform: rotate(0deg); }
             15% { transform: rotate(15deg); }
@@ -107,30 +106,29 @@
     ];
 
     function moveButton() {
-        // Make the No button float freely
+        // Move No button
         noBtn.style.position = "fixed";
-
         const maxX = window.innerWidth - noBtn.offsetWidth;
         const maxY = window.innerHeight - noBtn.offsetHeight;
-
         const randomX = Math.random() * maxX;
         const randomY = Math.random() * maxY;
-
         noBtn.style.left = randomX + "px";
         noBtn.style.top = randomY + "px";
 
         // Trigger wiggle animation
         noBtn.classList.remove("wiggle");
-        void noBtn.offsetWidth; // force reflow to restart animation
+        void noBtn.offsetWidth; // force reflow
         noBtn.classList.add("wiggle");
 
-        // Show random Valentine message with fade
+        // Show random Valentine message
         const randomMsg = valentineMessages[Math.floor(Math.random() * valentineMessages.length)];
-        message.classList.remove("show");
-        setTimeout(() => {
-            message.textContent = randomMsg;
+
+        // Immediately hide, update, then fade in
+        message.style.opacity = 0;
+        message.textContent = randomMsg;
+        requestAnimationFrame(() => {
             message.classList.add("show");
-        }, 200);
+        });
     }
 
     noBtn.addEventListener("mouseover", moveButton);
