@@ -222,13 +222,42 @@ class Rocket {
         }
         fireworkSound.currentTime=0; fireworkSound.play().catch(()=>{});
     }
-    draw() {
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = this.color;
+    drawHeart(ctx, x, y, size, color) {
+        ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+        const topCurveHeight = size * 0.3;
+        ctx.moveTo(x, y + topCurveHeight);
+        // left half
+        ctx.bezierCurveTo(
+            x, y, 
+            x - size/2, y, 
+            x - size/2, y + topCurveHeight
+        );
+        // bottom tip
+        ctx.bezierCurveTo(
+            x - size/2, y + (size + topCurveHeight)/2, 
+            x, y + (size + topCurveHeight)/2, 
+            x, y + size
+        );
+        // right half
+        ctx.bezierCurveTo(
+            x, y + (size + topCurveHeight)/2, 
+            x + size/2, y + (size + topCurveHeight)/2, 
+            x + size/2, y + topCurveHeight
+        );
+        ctx.bezierCurveTo(
+            x + size/2, y, 
+            x, y, 
+            x, y + topCurveHeight
+        );
+        ctx.closePath();
         ctx.fill();
     }
+
+    draw() {
+        this.drawHeart(ctx, this.x, this.y, this.radius, this.color);
+    }
+
 }
 
 
