@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html>
 <head>
 <title>Be my Valentine 2026? 💖</title>
@@ -49,20 +49,19 @@ canvas {
   animation: wiggle 0.5s ease;
 }
 
-
 button {
-    padding: 12px 24px;
+    padding: 14px 28px;
     border: none;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 20px;
     cursor: pointer;
     position: relative;
     transition: transform 0.2s;
 }
 button:active { transform: scale(0.95); }
 
-.yes { background-color: #ff4b5c; color: white; }
-.no { background-color: #ff6f61; color: white; }
+.yes { background-color: #ff3366; color: white; }
+.no { background-color: #ff9933; color: white; }
 
 #messagePanel {
     margin-top: 20px;
@@ -114,7 +113,7 @@ button:active { transform: scale(0.95); }
 
 @media (max-width:600px){
     #message { font-size:36px; }
-    button { font-size:18px; padding:14px 28px; }
+    button { font-size:22px; padding:16px 32px; }
     #thankYouBtn { font-size:28px; padding:18px 36px; }
 }
 </style>
@@ -124,10 +123,10 @@ button:active { transform: scale(0.95); }
 <canvas id="fireworksCanvas"></canvas>
 
 <div class="container" id="mainContainer">
-    <h1 id="question">Will you be my Valentine?</h1>
+    <h1 id="question">Will you be my Valentine 🫦?</h1>
     <div class="buttons" id="buttonsDiv">
-        <button class="yes" id="yesBtn">Yes</button>
-        <button class="no" id="noBtn">No</button>
+        <button class="yes" id="yesBtn">Yes 🥰</button>
+        <button class="no" id="noBtn">No 🤬</button>
     </div>
 
     <div id="messagePanel">
@@ -171,14 +170,21 @@ let loveQuotes = [
 
 // --- No button movement ---
 function moveButton(){
-    noBtn.style.position="fixed";
+    noBtn.style.position = "fixed";
     const maxX = window.innerWidth - noBtn.offsetWidth;
     const maxY = window.innerHeight - noBtn.offsetHeight;
-    noBtn.style.left=Math.random()*maxX+"px";
-    noBtn.style.top=Math.random()*maxY+"px";
-    const quote = loveQuotes[Math.floor(Math.random()*loveQuotes.length)];
+    noBtn.style.left = Math.random() * maxX + "px";
+    noBtn.style.top = Math.random() * maxY + "px";
+
+    const quote = loveQuotes[Math.floor(Math.random() * loveQuotes.length)];
     message.textContent = quote;
     messagePanel.style.opacity = 1;
+
+    // --- Make Yes button wiggle ---
+    yesBtn.classList.add("wiggle");
+    setTimeout(() => {
+        yesBtn.classList.remove("wiggle");
+    }, 500);
 }
 noBtn.addEventListener("mouseover", moveButton);
 
@@ -292,7 +298,6 @@ thankYouBtn.addEventListener('click', () => {
     rockets = [];
     particles = [];
 });
-
 </script>
 
 </body>
