@@ -58,10 +58,6 @@
             transition: opacity 0.5s ease;
         }
 
-        .show {
-            opacity: 1;
-        }
-
         @keyframes wiggle {
             0% { transform: rotate(0deg); }
             15% { transform: rotate(15deg); }
@@ -115,19 +111,20 @@
         noBtn.style.left = randomX + "px";
         noBtn.style.top = randomY + "px";
 
-        // Trigger wiggle animation
+        // Wiggle animation
         noBtn.classList.remove("wiggle");
         void noBtn.offsetWidth; // force reflow
         noBtn.classList.add("wiggle");
 
-        // Pick random message
+        // Random message
         const randomMsg = valentineMessages[Math.floor(Math.random() * valentineMessages.length)];
-        message.textContent = randomMsg;
 
-        // Trigger fade-in
-        message.classList.remove("show");
-        void message.offsetWidth; // force reflow
-        message.classList.add("show");
+        // Fade-in manually
+        message.style.opacity = 0;
+        message.textContent = randomMsg;
+        setTimeout(() => {
+            message.style.opacity = 1;
+        }, 50); // small delay to trigger transition
     }
 
     noBtn.addEventListener("mouseover", moveButton);
