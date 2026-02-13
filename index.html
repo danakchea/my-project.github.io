@@ -19,23 +19,62 @@
             padding: 40px 60px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1.2s ease-in-out;
         }
 
         h1 {
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            animation: slideDown 1s ease-out;
         }
 
-        p {
-            color: #666;
-            font-size: 18px;
+        .buttons {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .yes {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .no {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Hello, World!</h1>
-        <p>This is my styled HTML page.</p>
+        <h1>Do you like this page?</h1>
+        <div class="buttons">
+            <button class="yes" onclick="alert('Awesome! 🎉')">Yes</button>
+            <button class="no" onclick="alert('Oh no! 😢')">No</button>
+        </div>
     </div>
 </body>
 </html>
